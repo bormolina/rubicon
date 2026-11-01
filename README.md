@@ -14,19 +14,28 @@ guarda automáticamente**: podrás revisar el resultado antes de pulsar el botó
 4. Activa **Modo de desarrollador**.
 5. Pulsa **Cargar descomprimida** y selecciona la carpeta que acabas de descomprimir (la que contiene `manifest.json`).
 
+![Carga de la extensión Rubicon descomprimida en el navegador](img/1.png)
 
 ## Usar Rubicon
 
-1. En Moodle, abre una actividad y entra en la configuración de su rúbrica.
-2. Abre **Editar la definición del formulario actual** y espera a que aparezca
-   el editor. Encima de la rúbrica verás **Importar rúbrica Markdown**.
-3. Pulsa el botón, pega tu tabla y usa **Comprobar** para validarla.
+1. En Moodle, abre una actividad, entra en calificación avanzada, elige rúbrica y nuevo formulario desde cero.
+2. Encima de la rúbrica verás **Importar rúbrica Markdown**.
+3. Pulsa el botón, pega tu tabla (se la pides a la IA, le pasas tu documento con tu rúbrica o incluso una captura de pantalla) y usa **Comprobar** para validarla.
+
+![Comprobación de una rúbrica Markdown antes de importarla](img/2.png)
+
 4. Pulsa **Rellenar Moodle** y confirma la sustitución de las filas actuales.
+
+![Rúbrica importada en el formulario de Moodle](img/3.png)
+
 5. Revisa criterios, descripciones y puntos. Si algo no está bien, usa
    **Deshacer importación (antes de guardar)**.
 6. Guarda la rúbrica con el botón normal de Moodle cuando estés conforme.
 
 ## Formato Markdown
+
+Puedes comenzar con la [rúbrica de ejemplo](RUBRICA_EJEMPLO.md), copiar su
+tabla completa y pegarla en Rubicon.
 
 La primera columna contiene el criterio. Cada encabezado de nivel debe acabar
 con su puntuación entre paréntesis:
