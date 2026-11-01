@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Rubicon — Rúbricas Markdown para Moodle",
+  "version": "1.0.0",
+  "description": "Importa una tabla Markdown en el editor de rúbricas de Moodle.",
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["rubicon.js"],
+      "css": ["rubicon.css"],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ]
+}

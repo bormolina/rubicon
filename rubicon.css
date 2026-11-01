@@ -1,0 +1,37 @@
+#rubicon-open-importer {
+  margin: 0 0 1rem;
+}
+
+#importar-rubrica-md {
+  width: min(900px, 90vw);
+  max-height: 90vh;
+  padding: 1.5rem;
+  border: 1px solid #aaa;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 25%);
+}
+
+#importar-rubrica-md::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+#importar-rubrica-md textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+#importar-rubrica-md [role="status"] {
+  min-height: 2.5em;
+  white-space: pre-wrap;
+}
+
+#importar-rubrica-md .rubicon-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+#rubicon-undo-import {
+  margin: 0 0 1rem;
+}
