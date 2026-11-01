@@ -5,13 +5,14 @@ guarda automáticamente**: podrás revisar el resultado antes de pulsar el botó
 
 ## Instalar en Chrome, Edge, Brave u otro navegador Chromium
 
-1. Descarga o clona este repositorio y déjalo en una carpeta permanente.
-2. Abre la página de extensiones del navegador:
+1. En GitHub, pulsa **Code** y después **Download ZIP** para descargar el repositorio como archivo `.zip`.
+2. Descomprime el archivo `.zip` y deja la carpeta resultante en una ubicación permanente. No cargues directamente el archivo comprimido.
+3. Abre la página de extensiones del navegador:
    - Chrome: `chrome://extensions`
    - Edge: `edge://extensions`
    - Brave: `brave://extensions`
-3. Activa **Modo de desarrollador**.
-4. Pulsa **Cargar descomprimida** y selecciona la carpeta de este repositorio (la que contiene `manifest.json`).
+4. Activa **Modo de desarrollador**.
+5. Pulsa **Cargar descomprimida** y selecciona la carpeta que acabas de descomprimir (la que contiene `manifest.json`).
 
 
 ## Usar Rubicon
