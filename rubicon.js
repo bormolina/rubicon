@@ -1,6 +1,7 @@
 /* Extensión Rubicon para el editor de rúbricas de Moodle.
    Añade un botón para pegar una tabla Markdown. No guarda en el servidor.
-   Cada encabezado de nivel debe terminar en puntos entre paréntesis: Bien (1).
+   Admite formato clásico y formato vertical con una fila por nivel.
+   En el clásico, cada encabezado debe terminar en puntos: Bien (1).
    Para puntos distintos por criterio, empieza la celda por [2.5].
    Las filas existentes se sustituyen tras confirmar. */
 (() => {
@@ -25,8 +26,8 @@
   dialog.id = 'importar-rubrica-md';
   // Solo contenido fijo; la tabla pegada se trata como texto.
   dialog.innerHTML = `<h2>Importar rúbrica Markdown</h2>
-    <p>Una fila por criterio. Encabezados: Insuficiente (0), Bien (1), Excelente (2).</p>
-    <p>Para cambiar los puntos de una celda concreta: <code>[1.5] Descripción</code>.</p>
+    <p>Admite la tabla clásica (una fila por criterio) y la tabla vertical (una fila por nivel).</p>
+    <p>Formato vertical: <code>Criterio | Nivel | Puntos | Descripción</code>. Deja Criterio vacío para continuar el anterior.</p>
     <textarea rows="12" aria-label="Tabla Markdown"></textarea>
     <pre style="white-space:pre-wrap" role="status"></pre>
     <div class="rubicon-actions">
@@ -35,7 +36,7 @@
       <button type="button" class="btn btn-secondary" data-action="close">Cerrar</button>
     </div>`;
   const input = dialog.querySelector('textarea');
-  input.placeholder = '| Criterio | Insuficiente (0) | Bien (1) | Excelente (2) |\n|---|---|---|---|\n| Contenido | Incompleto | Correcto | Completo |';
+  input.placeholder = '| Criterio | Nivel | Puntos | Descripción |\n|---|---|---:|---|\n| Contenido | Insuficiente | 0 | No responde |\n|  | Adecuado | 1 | Responde parcialmente |\n|  | Excelente | 2 | Responde con profundidad |';
   const status = dialog.querySelector('[role=status]');
   function cells(line) {
     let s = line.trim();
@@ -56,6 +57,32 @@
     const headers = cells(lines[0]);
     const sep = cells(lines[1]);
     if (headers.length < 3 || sep.length !== headers.length || !sep.every(s => /^:?-{3,}:?$/.test(s))) throw Error('Tabla Markdown inválida: comprueba la cabecera y la línea |---|---|…|.');
+    const normalizedHeaders = headers.map(h => h.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim());
+    const vertical = normalizedHeaders.length === 4 && normalizedHeaders.every((h, i) => h === ['criterio', 'nivel', 'puntos', 'descripcion'][i]);
+    if (vertical) {
+      const rows = [];
+      let current = null;
+      lines.slice(2).forEach((line, i) => {
+        const c = cells(line);
+        if (c.length !== 4) throw Error(`Fila ${i + 1}: deben existir exactamente cuatro celdas.`);
+        const criterion = c[0].trim();
+        const levelName = c[1].trim();
+        const scoreText = c[2].trim().replace(',', '.');
+        const description = c[3].replace(/<br\s*\/?\s*>/gi, '\n').trim();
+        if (!criterion && !current) throw Error('Fila 1: el primer criterio no puede estar vacío.');
+        if (!levelName) throw Error(`Fila ${i + 1}: nombre de nivel vacío.`);
+        if (!/^-?\d+(?:\.\d+)?$/.test(scoreText)) throw Error(`Fila ${i + 1}: «${c[2]}» no es una puntuación válida.`);
+        if (!description) throw Error(`Fila ${i + 1}: descripción vacía.`);
+        if (criterion && (!current || criterion !== current.description)) {
+          current = { description: criterion, levels: [] };
+          rows.push(current);
+        }
+        const score = Number(scoreText);
+        if (current.levels.some(level => level.score === score)) throw Error(`Fila ${i + 1}: la puntuación ${score} está repetida en «${current.description}».`);
+        current.levels.push({ score, definition: `${levelName}: ${description}` });
+      });
+      return rows;
+    }
     const defaults = headers.slice(1).map(h => {
       const m = h.match(/\((-?\d+(?:[.,]\d+)?)\)\s*$/);
       if (!m) throw Error(`Faltan puntos en «${h}». Ejemplo: Excelente (2).`);
@@ -77,7 +104,9 @@
     return rows;
   }
   function summary(rows) {
-    return `${rows.length} criterios · ${rows[0].levels.length} niveles por criterio\nSuma de máximos: ${Number(rows.reduce((n, r) => n + Math.max(...r.levels.map(l => l.score)), 0).toFixed(8))} puntos.`;
+    const counts = rows.map(row => row.levels.length);
+    const levelSummary = new Set(counts).size === 1 ? `${counts[0]} niveles por criterio` : `entre ${Math.min(...counts)} y ${Math.max(...counts)} niveles por criterio`;
+    return `${rows.length} criterios · ${levelSummary}\nSuma de máximos: ${Number(rows.reduce((n, r) => n + Math.max(...r.levels.map(l => l.score)), 0).toFixed(8))} puntos.`;
   }
   function build(rows) {
     let next = Date.now();
